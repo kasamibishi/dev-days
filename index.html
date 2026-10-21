@@ -18,6 +18,50 @@
       --green: #2fa36b;
       --red: #d94b6a;
       --shadow: 0 20px 60px rgba(30, 25, 90, .18);
+      --space-bg:
+        radial-gradient(circle at 12% 15%, rgba(255, 200, 87, .8) 0 2px, transparent 3px),
+        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, .9) 0 2px, transparent 3px),
+        radial-gradient(circle at 75% 78%, rgba(255, 255, 255, .8) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 22% 86%, rgba(87, 214, 178, .75) 0 2px, transparent 3px),
+        linear-gradient(145deg, #241657 0%, #5033a4 54%, #1d306b 100%);
+    }
+
+    [data-theme="launch-pad"] {
+      --ink: #17324a;
+      --muted: #526b79;
+      --paper: #fffaf0;
+      --purple: #087f8c;
+      --purple-dark: #05616b;
+      --pink: #e85d75;
+      --mint: #4fb9a8;
+      --yellow: #f5bd42;
+      --green: #277b50;
+      --red: #b63f58;
+      --shadow: 0 20px 60px rgba(18, 66, 79, .22);
+      --space-bg:
+        radial-gradient(circle at 15% 18%, rgba(245, 189, 66, .9) 0 2px, transparent 3px),
+        radial-gradient(circle at 84% 15%, rgba(255, 255, 255, .85) 0 2px, transparent 3px),
+        radial-gradient(circle at 76% 80%, rgba(79, 185, 168, .8) 0 2px, transparent 3px),
+        linear-gradient(145deg, #123c55 0%, #087f8c 55%, #235b76 100%);
+    }
+
+    [data-theme="lunar"] {
+      --ink: #1c2938;
+      --muted: #526477;
+      --paper: #f5f7f8;
+      --purple: #3f6f9f;
+      --purple-dark: #2c527b;
+      --pink: #c95f7d;
+      --mint: #5cae9f;
+      --yellow: #d9aa3f;
+      --green: #26734d;
+      --red: #ad4058;
+      --shadow: 0 20px 60px rgba(13, 29, 45, .28);
+      --space-bg:
+        radial-gradient(circle at 14% 17%, rgba(217, 170, 63, .85) 0 2px, transparent 3px),
+        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, .9) 0 2px, transparent 3px),
+        radial-gradient(circle at 75% 79%, rgba(255, 255, 255, .8) 0 1.5px, transparent 2.5px),
+        linear-gradient(145deg, #202b3a 0%, #3e5970 54%, #243d55 100%);
     }
 
     * { box-sizing: border-box; }
@@ -29,12 +73,7 @@
       margin: 0;
       color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 12% 15%, rgba(255, 200, 87, .8) 0 2px, transparent 3px),
-        radial-gradient(circle at 82% 12%, rgba(255, 255, 255, .9) 0 2px, transparent 3px),
-        radial-gradient(circle at 75% 78%, rgba(255, 255, 255, .8) 0 1.5px, transparent 2.5px),
-        radial-gradient(circle at 22% 86%, rgba(87, 214, 178, .75) 0 2px, transparent 3px),
-        linear-gradient(145deg, #241657 0%, #5033a4 54%, #1d306b 100%);
+      background: var(--space-bg);
       background-size: 180px 180px, 230px 230px, 160px 160px, 210px 210px, auto;
       display: grid;
       place-items: center;
@@ -66,6 +105,40 @@
 
     .brand strong { font-size: 1.05rem; }
     .brand span { opacity: .72; font-size: .9rem; }
+
+    .theme-picker {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 17px clamp(24px, 5vw, 46px) 0;
+    }
+
+    .theme-picker label {
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .theme-picker select {
+      padding: 8px 30px 8px 10px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 2px solid #d8d8e8;
+      border-radius: 10px;
+      font: inherit;
+      font-size: .82rem;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .theme-picker select:focus-visible {
+      border-color: var(--purple);
+      outline: 3px solid var(--yellow);
+      outline-offset: 3px;
+    }
 
     .card {
       position: relative;
@@ -276,6 +349,7 @@
       .answers { grid-template-columns: 1fr; }
       .card { border-radius: 23px; }
       .quiz-view, .results-view { padding: 25px 20px 30px; }
+      .theme-picker { justify-content: space-between; padding: 17px 20px 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -291,6 +365,14 @@
     </header>
 
     <section class="card" aria-live="polite">
+      <div class="theme-picker">
+        <label for="themeSelect">Theme</label>
+        <select id="themeSelect" aria-label="Choose a quiz theme">
+          <option value="deep-space">Deep Space</option>
+          <option value="launch-pad">Launch Pad</option>
+          <option value="lunar">Lunar</option>
+        </select>
+      </div>
       <div class="quiz-view" id="quizView">
         <div class="topline">
           <p class="counter" id="counter">Question 1 of 10</p>
@@ -351,6 +433,20 @@
     const resultTitle = document.querySelector("#resultTitle");
     const resultsCopy = document.querySelector("#resultsCopy");
     const restartButton = document.querySelector("#restartButton");
+    const themeSelect = document.querySelector("#themeSelect");
+    const themeStorageKey = "cosmic-quest-theme";
+    const themeNames = new Set(["deep-space", "launch-pad", "lunar"]);
+
+    function setTheme(theme) {
+      const selectedTheme = themeNames.has(theme) ? theme : "deep-space";
+      document.body.dataset.theme = selectedTheme;
+      themeSelect.value = selectedTheme;
+      localStorage.setItem(themeStorageKey, selectedTheme);
+    }
+
+    const savedTheme = localStorage.getItem(themeStorageKey);
+    setTheme(savedTheme || "deep-space");
+    themeSelect.addEventListener("change", () => setTheme(themeSelect.value));
 
     function renderQuestion() {
       const question = questions[current];
